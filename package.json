@@ -1,0 +1,30 @@
+{
+  "name": "insurance_billing",
+  "version": "1.0.0",
+  "description": "service to integrate with billing web application",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sivaraman1994/InsuranceBillingService.git"
+  },
+  "keywords": [
+    "this",
+    "interacts",
+    "with",
+    "biling",
+    "web",
+    "app"
+  ],
+  "author": "sivaraman",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/sivaraman1994/InsuranceBillingService/issues"
+  },
+  "homepage": "https://github.com/sivaraman1994/InsuranceBillingService#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
