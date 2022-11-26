@@ -13,4 +13,13 @@ registeredUserRoute.route("/get-users").get((req,res) => {
     }) 
 })
 
+  registeredUserRoute.route("/add-user").post((req,res,next) => {
+    RegisteredUser.create(req.body, (err,data) => {
+      if(err)
+         return next(err)
+        else
+         res.json(data)
+    })
+  })
+
   module.exports = registeredUserRoute
