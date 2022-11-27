@@ -7,8 +7,8 @@ const express = require('express'),
       createError = require('http-errors');
 const app = express();
 const billingAppController = require("./controllers/billingApp.controller");
-const registeredUserRoute = require('./routes/registereduser.route')
-const policyDetailRoute = require('./routes/policydetail.route')
+const registeredUserRoute = require('./routes/registereduser.route');
+const policyDetailRoute = require('./routes/policydetail.route');
 const PORT = process.env.PORT || 3000;
 
 mongoose.Promise = global.Promise
@@ -28,7 +28,7 @@ mongoose.connect(dbConfig.db,{useNewUrlParser:true}).then(() => {
 
 app.get('/hello', (req, res)=>{
     res.set('Content-Type', 'text/html');
-    res.status(200).send("<h1>Hello GFG Learner!</h1>");
+    res.status(200).send("<h1>Hello !</h1>");
 });
 app.post('/fetchPolicyDetails',billingAppController.fetchPolicyDetails);
 app.post('/validateUser',billingAppController.validateUser);

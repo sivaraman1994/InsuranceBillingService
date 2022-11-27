@@ -2,15 +2,22 @@ const jwt_controller = require("./jwt.controller");
 const mongoose = require("mongoose");
 const billingAppDataController = require("./billingApp.data.controller");
 
-exports.validateUser = ((req,res) => {
-    var userData = billingAppDataController.checkExistingUser(req);
+exports.validateUser = async (req,res) => {
+    var userData = await billingAppDataController.checkExistingUser(req);
+    var isUserIdExists = await billingAppDataController.getUserDetailsById(req.body.userID);
+    console.log("id present"+JSON.stringify(isUserIdExists));
     
-    userData.then((data,err)=>{
-        if(data.userName != null) res.status(200).json(data);
-        else res.status(401).json("User not Authorized");
-      });
+   
+    if(userData.userName != null) res.status(200).json(userData);
     
-});
+    else if (isUserIdExists && isUserIdExists.name != null){
+      res.status(401).json("User not Authorized")
+    }
+    else res.status(401).json("User ID does not exist");
+      
+      
+    
+};
 
 exports.fetchPolicyDetails =async (req, res)=>{
     let isNotAuthorized = false;
