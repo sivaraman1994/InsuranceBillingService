@@ -1,41 +1,54 @@
 const jwt_controller = require("./jwt.controller");
 const mongoose = require("mongoose");
-const policyDtl_model = require("../models/policyData.model")
+const billingAppDataController = require("./billingApp.data.controller");
 
-var policyDetailSchema = mongoose.model("policyDetails", policyDtl_model.getPolicyDetailSchema());
+exports.validateUser = ((req,res) => {
+    var userData = billingAppDataController.checkExistingUser(req);
+    
+    userData.then((data,err)=>{
+        if(data.userName != null) res.status(200).json(data);
+        else res.status(401).json("User not Authorized");
+      });
+    
+});
 
-
-exports.fetchPolicyStatus = ((req, res)=>{
+exports.fetchPolicyDetails =async (req, res)=>{
+    let isNotAuthorized = false;
+    var policyData = {};
+    var response = {};
+    var tokenData = {};
+   
     try{
-        console.log("token"+req.body.token);
-        if(req.body.token){
-            const validData = jwt_controller.validateToken(req.body.token);
-            console.log("valid data"+JSON.stringify(validData));
-            if(validData){
-                var response = this.getPolicyStsFromDb(validData);
-        
-                response.then((data,err) =>{
-                res.status(200).json(data)
-                });
-                next
+        if(req.body.token ||req.headers.token ){
+            let token = req.body.token ||req.headers.token;
+            tokenData = jwt_controller.validateToken(token);
+            if(tokenData.userName){
+              policyData = await this.getPolicyDetailFromDb(tokenData);  
+             response.policyData = policyData;           
+                             
             }
-            else res.status(401).json("User not Authorized");
+            else isNotAuthorized = true;
         
         }  
-        else res.status(401).json("User not Authorized");
+        else isNotAuthorized = true;
     }
-    catch{}{
-        res.status(401).json("User not Authorized");
-    }
-    
-    
-  });
+    catch(err) {
+     isNotAuthorized = true;
+     
+    }    
+   
+  if (isNotAuthorized) res.status(401).json("not authorized");
+  else res.status(200).json(response);
+  };
 
-  exports.getPolicyStsFromDb = async () => {
-     let policyStatusDetails = {};
+  exports.getPolicyDetailFromDb = async (userData) => {
+    let policyDetails = {};
     
-     const policySts =  await policyDetailSchema.findOne();
-     return policyStatusDetails;
+    const users = await billingAppDataController.getUserDetailsById(userData.userId);
+    if(users && users.userID && users.userType == "AGENT"){
+       policyDetails = await billingAppDataController.getPolicyDetailsByAgentId(users._id);
+    }
+    return policyDetails;
   };
     
    

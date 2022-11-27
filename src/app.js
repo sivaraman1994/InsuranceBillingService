@@ -6,6 +6,9 @@ const express = require('express'),
       dbConfig = require('./db/db'),
       createError = require('http-errors');
 const app = express();
+const billingAppController = require("./controllers/billingApp.controller");
+const registeredUserRoute = require('./routes/registereduser.route')
+const policyDetailRoute = require('./routes/policydetail.route')
 const PORT = process.env.PORT || 3000;
 
 mongoose.Promise = global.Promise
@@ -15,8 +18,7 @@ mongoose.connect(dbConfig.db,{useNewUrlParser:true}).then(() => {
         console.log("DB connection ERR:"+err)} 
     )
 
- const registeredUserRoute = require('./routes/registereduser.route')
- const policyDetailRoute = require('./routes/policydetail.route')
+
  app.use(bodyParser.json())
  app.use(bodyParser.urlencoded({extended:false}))
  app.use(cors())
@@ -28,7 +30,9 @@ app.get('/hello', (req, res)=>{
     res.set('Content-Type', 'text/html');
     res.status(200).send("<h1>Hello GFG Learner!</h1>");
 });
-  
+app.post('/fetchPolicyDetails',billingAppController.fetchPolicyDetails);
+app.post('/validateUser',billingAppController.validateUser);
+
 app.listen(PORT, (error) =>{
     if(!error)
         console.log("Server is Successfully Running, and App is  listening on port "+ PORT)
