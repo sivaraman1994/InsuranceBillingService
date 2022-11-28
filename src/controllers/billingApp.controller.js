@@ -18,7 +18,18 @@ exports.validateUser = async (req,res) => {
       
     
 };
-
+exports.registerUser = async(req,res) => {
+  var userData = await billingAppDataController.getUserDetailsById(req.body.userID);
+  if(userData && userData.userID !=null){
+    res.status(401).json("User already exist");
+  }
+  else{
+    userData = req.body;
+    userData.userType = "REGULAR";
+    billingAppDataController.insertUserInfo(userData);
+    res.status(200).json("User created succesfully");
+  }
+}
 exports.fetchPolicyDetails =async (req, res)=>{
     let isNotAuthorized = false;
     var policyData = {};

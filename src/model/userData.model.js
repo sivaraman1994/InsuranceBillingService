@@ -9,7 +9,7 @@ exports.getUserSchema = () => {
                 type: String,
                 required: true,
                 trim: true,
-                minlength: 7
+                minlength: 4
              },
             userType: String,
             name:String

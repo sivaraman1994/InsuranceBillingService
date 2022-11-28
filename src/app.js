@@ -7,23 +7,13 @@ const express = require('express'),
       createError = require('http-errors');
 const app = express();
 const billingAppController = require("./controllers/billingApp.controller");
-const registeredUserRoute = require('./routes/registereduser.route');
-const policyDetailRoute = require('./routes/policydetail.route');
 const PORT = process.env.PORT || 3000;
 
 mongoose.Promise = global.Promise
-mongoose.connect(dbConfig.db,{useNewUrlParser:true}).then(() => {
-    console.log("database connect successfully.")},
-    (err)=>{
-        console.log("DB connection ERR:"+err)} 
-    )
-
 
  app.use(bodyParser.json())
  app.use(bodyParser.urlencoded({extended:false}))
  app.use(cors())
- app.use('/register-api',registeredUserRoute)
- app.use('/policydetail-api',policyDetailRoute)
  
 
 app.get('/hello', (req, res)=>{
@@ -32,6 +22,7 @@ app.get('/hello', (req, res)=>{
 });
 app.post('/fetchPolicyDetails',billingAppController.fetchPolicyDetails);
 app.post('/validateUser',billingAppController.validateUser);
+app.post('/registerUser',billingAppController.registerUser);
 
 app.listen(PORT, (error) =>{
     if(!error)

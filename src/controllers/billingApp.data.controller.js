@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const User_model = require("../model/userData.model")
 const policyDtl_model = require("../model/policyData.model")
+const ObjectID = mongoose.Types.ObjectId;
 
 const jwt_controller = require("./jwt.controller");
 // const uri = process.env.MONGODB_URI;
@@ -28,6 +29,12 @@ exports.getUserDetailsById = async(userID) =>{
 
 exports.getPolicyDetailsByAgentId = async(userObjectID) =>{
   return await policyDtlSchema.find({"agentID":userObjectID});  
+ }
+
+ exports.insertUserInfo = async(userInfo) =>{
+  userInfo._id = new ObjectID();
+  await userSchema.create(userInfo);
+
  }
  
 exports.checkExistingUser = async (req, res) => {
