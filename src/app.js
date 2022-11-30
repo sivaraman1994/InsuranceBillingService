@@ -3,7 +3,6 @@ const express = require('express'),
       mongoose = require('mongoose'),
       cors = require('cors'),
       bodyParser = require('body-parser'),
-      dbConfig = require('./db/db'),
       createError = require('http-errors');
 const app = express();
 const billingAppController = require("./controllers/billingApp.controller");

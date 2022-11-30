@@ -10,7 +10,7 @@ const connectionParams = {
   useUnifiedTopology: true,
   useNewUrlParser: true
 }
-mongoose.connect(uri, connectionParams)
+  mongoose.connect(uri, connectionParams)
   .then(() => {
     process
     console.log('Connected to database ')
