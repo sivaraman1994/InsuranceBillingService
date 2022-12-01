@@ -19,7 +19,7 @@ app.get('/hello', (req, res)=>{
     res.set('Content-Type', 'text/html');
     res.status(200).send("<h1>Hello !</h1>");
 });
-app.post('/fetchPolicyDetails',billingAppController.fetchPolicyDetails);
+app.get('/fetchPolicyDetails',billingAppController.fetchPolicyDetails);
 app.post('/validateUser',billingAppController.validateUser);
 app.post('/registerUser',billingAppController.registerUser);
 
