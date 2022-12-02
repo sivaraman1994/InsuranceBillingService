@@ -61,15 +61,10 @@ exports.fetchPolicyDetails =async (req, res)=>{
 
   exports.getPolicyDetailFromDb = async (userData) => {
     let policyDetails = {};
-    let policyReturnObj = {};
     
     const users = await billingAppDataController.getUserDetailsById(userData.userId);
     if(users && users.userID && users.userType == "AGENT"){
        policyDetails = await billingAppDataController.getPolicyDetailsByAgentId(users._id);
-       // iterate above result from policyDetails.userID
-       policyDetails.userName = "test"; // from users collection inside for loop
-    }
-    policyReturnObj.policyData = policyDetails;
     
     return policyReturnObj;
   };
