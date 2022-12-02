@@ -61,13 +61,16 @@ exports.fetchPolicyDetails =async (req, res)=>{
 
   exports.getPolicyDetailFromDb = async (userData) => {
     let policyDetails = {};
-    
-    const users = await billingAppDataController.getUserDetailsById(userData.userId);
-    if(users && users.userID && users.userType == "AGENT"){
-       policyDetails = await billingAppDataController.getPolicyDetailsByAgentId(users._id);
+    let policyReturnDetails = {};
+    const user = await billingAppDataController.getUserDetailsById(userData.userId);
+    if(user && user.userID && user.userType == "AGENT"){
+       policyDetails = await billingAppDataController.getPolicyDetailsByAgentId(user._id);
+       policyDetails.forEach(async (element) => {
+         let userObj = await billingAppDataController.getUserDetailsByName(element.userID);
+          policyDetails.userName = userObj.name
+          console.log(policyDetails.userName)
+       })
     }
-    return policyDetails;
+       return policyDetails;
   };
-    
-   
- 
+  

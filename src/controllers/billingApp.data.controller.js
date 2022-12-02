@@ -27,6 +27,9 @@ exports.getUserDetailsById = async(userID) =>{
  return await userSchema.findOne({"userID":userID});
 }
 
+exports.getUserDetailsByName = async(ObjectID) =>{
+  return await userSchema.findOne({"_id":ObjectID});
+ }
 exports.getPolicyDetailsByAgentId = async(userObjectID) =>{
   return await policyDtlSchema.find({"agentID":userObjectID});  
  }
