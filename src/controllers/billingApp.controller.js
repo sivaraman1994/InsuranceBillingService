@@ -42,7 +42,7 @@ exports.fetchPolicyDetails =async (req, res)=>{
             tokenData = jwt_controller.validateToken(token);
             if(tokenData.userName){
               policyData = await this.getPolicyDetailFromDb(tokenData);  
-             //response.policyData = policyData;           
+             // response.policyData = policyData;           
                              
             }
             else isNotAuthorized = true;
@@ -61,15 +61,20 @@ exports.fetchPolicyDetails =async (req, res)=>{
 
   exports.getPolicyDetailFromDb = async (userData) => {
     let policyDetails = {};
-    
+
     const users = await billingAppDataController.getUserDetailsById(userData.userId);
     if(users && users.userID && users.userType == "AGENT"){
        policyDetails = await billingAppDataController.getPolicyDetailsByAgentId(users._id);
-       policyDetails.forEach(async (element) => {
+        for(let element of policyDetails){
            let userObj = await billingAppDataController.getUserDetailsByName(element.userID);
-            policyDetails.userName = userObj.name
-            console.log(policyDetails.userName)
-      })
+            element.userName = userObj.name
+            console.log(element.userName)
+          // }
+           // policyDetails.find();
+          //   console.log(policyDetails)
+        }
+        // policyDetails.update({},{$push:{"userName":policyDetails.userName}})
+        // policyDetails.find().pretty();
+            return policyDetails;
    }
-      return policyDetails;
 };

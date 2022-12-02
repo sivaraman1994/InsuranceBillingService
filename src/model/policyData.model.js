@@ -1,10 +1,12 @@
 const mongoose = require("mongoose");
+const { stringify } = require("nodemon/lib/utils");
 
 exports.getPolicyDetailSchema = () => {
     var policyDtlSchema = mongoose.Schema(
         {
             _id:mongoose.Types.ObjectId,
             policyName: String,
+            userName: String,
             policyCoverage : Number,
             policyPremium: Number,
             userID: String,
