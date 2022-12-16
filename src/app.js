@@ -22,6 +22,7 @@ app.get('/hello', (req, res)=>{
 app.get('/fetchPolicyDetails',billingAppController.fetchPolicyDetails);
 app.post('/validateUser',billingAppController.validateUser);
 app.post('/registerUser',billingAppController.registerUser);
+app.post('/updatePolicy',billingAppController.updatePolicy);
 
 app.listen(PORT, (error) =>{
     if(!error)

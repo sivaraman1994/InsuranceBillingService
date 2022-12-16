@@ -30,9 +30,19 @@ exports.getUserDetailsById = async(userID) =>{
 exports.getUserDetailsByName = async(ObjectID) =>{
   return await userSchema.findOne({"_id":ObjectID});
  }
-exports.getPolicyDetailsByAgentId = async(userObjectID) =>{
-  return await policyDtlSchema.find({"agentID":userObjectID});  
+ exports.updatePolicyDetailsByPolicyId = async(policyObj) =>{
+  return await policyDtlSchema.updateOne({"policyID":policyObj.policyID},{"$set":{
+    "policyCoverage" : policyObj.policyCoverage,
+    "policyPremium" : policyObj.policyPremium,    
+    "paymentStatus" : policyObj.paymentStatus,
+    "isActive":policyObj.isActive
+
+  }}); 
  }
+ exports.getPolicyDetailsByAgentId = async(userObjectID) =>{
+  return await policyDtlSchema.find({"agentID":userObjectID,"isActive":true});  
+ }
+
 
  exports.insertUserInfo = async(userInfo) =>{
   userInfo._id = new ObjectID();
