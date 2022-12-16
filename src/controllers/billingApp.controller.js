@@ -18,6 +18,32 @@ exports.validateUser = async (req,res) => {
       
     
 };
+exports.updatePolicy = async(req,res)=>{
+  let isNotAuthorized = false;
+  try{
+    if(req.body.token ||req.headers.token ){
+        let token = req.body.token ||req.headers.token;
+        let policyData = req.body.policyData;
+        tokenData = jwt_controller.validateToken(token);
+        if(tokenData.userId){
+          const users = await billingAppDataController.getUserDetailsById(tokenData.userId);
+          if(users && users.userID && users.userType == "AGENT"){
+            let result=  await billingAppDataController.updatePolicyDetailsByPolicyId(policyData);  
+            console.log(JSON.stringify(result));       
+          }                
+        }
+        else isNotAuthorized = true;
+    
+    }  
+    else isNotAuthorized = true;
+}
+catch(err) {
+ isNotAuthorized = true;
+ 
+} 
+isNotAuthorized ?  res.status(401).json("not authorized"): res.status(200).json("policy details updated");
+
+}
 exports.registerUser = async(req,res) => {
   var userData = await billingAppDataController.getUserDetailsById(req.body.userID);
   if(userData && userData.userID !=null){

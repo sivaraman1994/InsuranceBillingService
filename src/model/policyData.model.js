@@ -14,6 +14,7 @@ exports.getPolicyDetailSchema = () => {
             travelStartDate: Date,
             travelEndDate: Date,
             country: String,
+            userName:String,
             paymentStatus: {type:String},
             dueDate: Date
         },
