@@ -28,6 +28,7 @@ exports.updatePolicy = async(req,res)=>{
         if(tokenData.userId){
           const users = await billingAppDataController.getUserDetailsById(tokenData.userId);
           if(users && users.userID && users.userType == "AGENT"){
+            console.log("policyData"+JSON.stringify(policyData)); 
             let result=  await billingAppDataController.updatePolicyDetailsByPolicyId(policyData);  
             console.log(JSON.stringify(result));       
           }                

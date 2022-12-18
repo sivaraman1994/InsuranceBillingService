@@ -17,7 +17,8 @@ exports.getPolicyDetailSchema = () => {
             userName:String,
             paymentStatus: {type:String},
             dueDate: Date,
-            isActive:Boolean
+            isActive:Boolean,
+            policyID:String
         },
         { timestamps: true }
     );
