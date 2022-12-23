@@ -18,6 +18,19 @@ exports.validateUser = async (req,res) => {
       
     
 };
+exports.registerUser = async(req,res) => {
+  var userData = await billingAppDataController.getUserDetailsById(req.body.userID);
+  if(userData && userData.userID !=null){
+    res.status(401).json("User already exist");
+  }
+  else{
+    userData = req.body;
+    userData.userType = "REGULAR";
+    billingAppDataController.insertUserInfo(userData);
+    res.status(200).json("User created succesfully");
+  }
+}
+  
 exports.updatePolicy = async(req,res)=>{
   let isNotAuthorized = false;
   try{
@@ -27,9 +40,10 @@ exports.updatePolicy = async(req,res)=>{
         tokenData = jwt_controller.validateToken(token);
         if(tokenData.userId){
           const users = await billingAppDataController.getUserDetailsById(tokenData.userId);
+          console.log("get users: "+users);
+          console.log("get policyData: "+JSON.stringify(policyData));
           if(users && users.userID && users.userType == "AGENT"){
-            console.log("policyData"+JSON.stringify(policyData)); 
-            let result=  await billingAppDataController.updatePolicyDetailsByPolicyId(policyData);  
+            let result=  await billingAppDataController.updatePolicyDetailsByPolicyId(policyData); 
             console.log(JSON.stringify(result));       
           }                
         }
@@ -45,41 +59,61 @@ catch(err) {
 isNotAuthorized ?  res.status(401).json("not authorized"): res.status(200).json("policy details updated");
 
 }
-exports.registerUser = async(req,res) => {
-  var userData = await billingAppDataController.getUserDetailsById(req.body.userID);
-  if(userData && userData.userID !=null){
-    res.status(401).json("User already exist");
-  }
-  else{
-    userData = req.body;
-    userData.userType = "REGULAR";
-    billingAppDataController.insertUserInfo(userData);
-    res.status(200).json("User created succesfully");
-  }
+exports.addPolicy = async(req,res)=>{
+  let isNotAuthorized = false;
+  policyData = {};
+  try{
+    if(req.body.token ||req.headers.token ){
+        let token = req.body.token ||req.headers.token;
+        let policyData = req.body.policyData;  //is from json
+        tokenData = jwt_controller.validateToken(token);
+        // console.log("token verification:"+tokenData)
+        if(tokenData.userId){
+          const users = await billingAppDataController.getUserDetailsById(tokenData.userId);
+          console.log("get policyData: "+policyData);    //get user from users collection
+          if(users && users.userID && users.userType == "AGENT"){
+             let policyUser = await billingAppDataController.getUserDetailsBYEmail(policyData.userEmail);
+             console.log("what are we getting"+policyUser);
+              if(Boolean(policyUser)){
+                policyData.userID = policyUser._id;
+                let result=  await billingAppDataController.addPolicyData(policyData); 
+                console.log("what is result: "+JSON.stringify(result));  
+              }
+              else{
+                res.status(401).json("User does not exist. Please create an account for the user");
+              }             
+          }                
+        }
+        else isNotAuthorized = true;    
+    }  
+    else isNotAuthorized = true;
 }
+catch(err) {
+ isNotAuthorized = true; 
+ console.log(err)
+} 
+isNotAuthorized ?  res.status(401).json("not authorized"): res.status(200).json("policy added successfully");
+}          
+  
 exports.fetchPolicyDetails =async (req, res)=>{
     let isNotAuthorized = false;
     var policyData = {};
-    var response = {};
-    var tokenData = {};
-   
+    //var response = {};
+    var tokenData = {};   
     try{
         if(req.body.token ||req.headers.token ){
             let token = req.body.token ||req.headers.token;
             tokenData = jwt_controller.validateToken(token);
             if(tokenData.userName){
               policyData = await this.getPolicyDetailFromDb(tokenData);  
-             // response.policyData = policyData;           
-                             
+             // response.policyData = policyData;                                      
             }
-            else isNotAuthorized = true;
-        
+            else isNotAuthorized = true;       
         }  
         else isNotAuthorized = true;
     }
     catch(err) {
-     isNotAuthorized = true;
-     
+     isNotAuthorized = true;     
     }    
    
   if (isNotAuthorized) res.status(401).json("not authorized");
