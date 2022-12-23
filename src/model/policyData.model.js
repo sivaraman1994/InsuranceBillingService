@@ -8,6 +8,7 @@ exports.getPolicyDetailSchema = () => {
             policyID:String,
             policyName: String,
             userName: String,
+            agentName: String,
             policyCoverage : Number,
             policyPremium: Number,
             userID: mongoose.Types.ObjectId,
