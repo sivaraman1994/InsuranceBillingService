@@ -6,7 +6,7 @@ const express = require('express'),
       createError = require('http-errors');
 const app = express();
 const billingAppController = require("./controllers/billingApp.controller");
-const PORT = process.env.PORT || 4020;
+const PORT = process.env.PORT || 3000;
 
 mongoose.Promise = global.Promise
 
