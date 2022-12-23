@@ -135,6 +135,13 @@ exports.fetchPolicyDetails =async (req, res)=>{
    }
     if(users && users.userID && users.userType == "REGULAR"){
       policyDetailsForUser = await billingAppDataController.getPolicyDetailsByUserId(users._id);
+      console.log("what policy user can see: "+policyDetailsForUser);
+      for(let element of policyDetailsForUser){
+        let userObj = await billingAppDataController.getUserDetailsByName(element.agentID)
+        //console.log("what is element: "+element)
+        element.agentName = userObj.name
+        console.log("what is agentname"+element.agentName)
+      }
         return policyDetailsForUser;
     }
 };
