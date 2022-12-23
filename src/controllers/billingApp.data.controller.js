@@ -65,8 +65,8 @@ exports.getUserDetailsByName = async(ObjectID) =>{
   await userSchema.create(userInfo);
 
  }
- exports.getPolicyDetailsByAgentId = async(userObjectID) =>{
-  return await policyDtlSchema.find({"agentID":userObjectID,"isActive":true});  
+ exports.getPolicyDetailsByUserId = async(userObjectID) =>{
+  return await policyDtlSchema.find({"userID":userObjectID,"isActive":true});  
  }
 
  exports.checkExistingUser = async (req, res) => {
