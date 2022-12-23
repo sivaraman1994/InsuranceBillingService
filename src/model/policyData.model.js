@@ -5,20 +5,20 @@ exports.getPolicyDetailSchema = () => {
     var policyDtlSchema = mongoose.Schema(
         {
             _id:mongoose.Types.ObjectId,
+            policyID:String,
             policyName: String,
             userName: String,
             policyCoverage : Number,
             policyPremium: Number,
-            userID: String,
+            userID: mongoose.Types.ObjectId,
             agentID: mongoose.Types.ObjectId,
             travelStartDate: Date,
             travelEndDate: Date,
             country: String,
-            userName:String,
+            //userEmail:String,
             paymentStatus: {type:String},
             dueDate: Date,
-            isActive:Boolean,
-            policyID:String
+            isActive:Boolean
         },
         { timestamps: true }
     );
