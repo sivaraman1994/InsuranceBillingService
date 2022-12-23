@@ -122,7 +122,7 @@ exports.fetchPolicyDetails =async (req, res)=>{
 
   exports.getPolicyDetailFromDb = async (userData) => {
     let policyDetails = {};
-
+    let policyDetailsForUser = {};
     const users = await billingAppDataController.getUserDetailsById(userData.userId);
     if(users && users.userID && users.userType == "AGENT"){
        policyDetails = await billingAppDataController.getPolicyDetailsByAgentId(users._id);
@@ -130,12 +130,11 @@ exports.fetchPolicyDetails =async (req, res)=>{
            let userObj = await billingAppDataController.getUserDetailsByName(element.userID);
             element.userName = userObj.name
             console.log(element.userName)
-          // }
-           // policyDetails.find();
-          //   console.log(policyDetails)
         }
-        // policyDetails.update({},{$push:{"userName":policyDetails.userName}})
-        // policyDetails.find().pretty();
             return policyDetails;
    }
+    if(users && users.userID && users.userType == "REGULAR"){
+      policyDetailsForUser = await billingAppDataController.getPolicyDetailsByUserId(users._id);
+        return policyDetailsForUser;
+    }
 };
