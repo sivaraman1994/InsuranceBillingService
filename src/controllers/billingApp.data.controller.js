@@ -30,6 +30,9 @@ exports.getUserDetailsById = async(userID) =>{
 exports.getUserDetailsByName = async(ObjectID) =>{
   return await userSchema.findOne({"_id":ObjectID});
  }
+ exports.getUserDetailsBYEmail = async(email) => {
+    return await userSchema.findOne({"userID":email})
+ }
  exports.updatePolicyDetailsByPolicyId = async(policyObj) =>{
   return await policyDtlSchema.updateOne({"policyID":policyObj.policyID},{"$set":{
     "policyCoverage" : policyObj.policyCoverage,
@@ -38,6 +41,19 @@ exports.getUserDetailsByName = async(ObjectID) =>{
     "isActive":policyObj.isActive
 
   }}); 
+ }
+ exports.addPolicyData = async(policyInfo) =>{
+  policyInfo._id = new ObjectID();
+  await policyDtlSchema.create(policyInfo)
+  // return await policyDtlSchema.insertOne({"policyID":policyObj.policyID},{"$set":{
+  //   "policyID" : policyObj.policyID,
+  //   "policyName" : policyObj.policyName,
+  //   "country" : policyObj.country,
+  //   "policyCoverage" : policyObj.policyCoverage,
+  //   "policyPremium" : policyObj.policyPremium,    
+  //   "paymentStatus" : policyObj.paymentStatus,
+  //   "isActive":policyObj.isActive
+  //}}); 
  }
  exports.getPolicyDetailsByAgentId = async(userObjectID) =>{
   return await policyDtlSchema.find({"agentID":userObjectID,"isActive":true});  
@@ -49,23 +65,28 @@ exports.getUserDetailsByName = async(ObjectID) =>{
   await userSchema.create(userInfo);
 
  }
- 
-exports.checkExistingUser = async (req, res) => {
+ exports.getPolicyDetailsByAgentId = async(userObjectID) =>{
+  return await policyDtlSchema.find({"agentID":userObjectID,"isActive":true});  
+ }
+
+ exports.checkExistingUser = async (req, res) => {
     
     //var userDetails = new userData(req.body);
     let userDetails ={};
    
     const users = await userSchema.findOne({"userID":req.body.userID,"password":req.body.password});
-    
+    console.log("what are the values of user: "+users);
     if( users != null && users.userID != null){ 
         userDetails.userName = users.name;  
         userDetails.userId = users.userID;        
         userDetails.userType = users.userType;
+        if(userDetails.userType == "AGENT"){
+           userDetails.agentID = users._id;
+        }
         userDetails.token = jwt_controller.generateToken(userDetails);
            
     } 
     return userDetails;
     
 };
-
 
