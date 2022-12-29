@@ -33,6 +33,9 @@ exports.getUserDetailsByName = async(ObjectID) =>{
  exports.getUserDetailsBYEmail = async(email) => {
     return await userSchema.findOne({"userID":email})
  }
+ exports.getPolicyById = async(policyID) => {
+  return await policyDtlSchema.findOne({"policyID":policyID})
+}
  exports.updatePolicyDetailsByPolicyId = async(policyObj) =>{
   return await policyDtlSchema.updateOne({"policyID":policyObj.policyID},{"$set":{
     "policyCoverage" : policyObj.policyCoverage,

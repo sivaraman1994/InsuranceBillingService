@@ -1,24 +1,48 @@
 const jwt_controller = require("./jwt.controller");
 const mongoose = require("mongoose");
 const billingAppDataController = require("./billingApp.data.controller");
+const bcrypt = require('bcryptjs');
 
 exports.validateUser = async (req,res) => {
-    var userData = await billingAppDataController.checkExistingUser(req);
-    var isUserIdExists = await billingAppDataController.getUserDetailsById(req.body.userID);
-    console.log("id present"+JSON.stringify(isUserIdExists));
+  let userDetails ={}; 
+    //var userData = await billingAppDataController.checkExistingUser(req);
+    var existingUserData = await billingAppDataController.getUserDetailsById(req.body.userID);
+    console.log("id present"+JSON.stringify(existingUserData));
     
-   
-    if(userData.userName != null) res.status(200).json(userData);
-    
-    else if (isUserIdExists && isUserIdExists.name != null){
-      res.status(401).json("User not Authorized")
+   if(existingUserData == null || existingUserData.name == null)
+        res.status(401).json("User ID does not exist");
+
+   else {
+    console.log("req password"+req.body.password + "existing"+existingUserData.password);
+    if(bcrypt.compareSync(req.body.password, existingUserData.password)){
+      
+      if( existingUserData != null && existingUserData.userID != null){ 
+          userDetails.userName = existingUserData.name;  
+          userDetails.userId = existingUserData.userID;        
+          userDetails.userType = existingUserData.userType;
+          if(userDetails.userType == "AGENT"){
+            userDetails.agentID = existingUserData._id;
+          }
+          userDetails.token = jwt_controller.generateToken(userDetails);
+           
+          } 
+          res.status(200).json(userDetails);
+      }
+      else res.status(401).json("User not Authorized") 
     }
-    else res.status(401).json("User ID does not exist");
+        
+    // if(userData.userName != null) res.status(200).json(userData);
+    
+    // else if (isUserIdExists && isUserIdExists.name != null){
+    //   res.status(401).json("User not Authorized")
+    // }
+    // else res.status(401).json("User ID does not exist");
       
       
     
 };
 exports.registerUser = async(req,res) => {
+  var salt = bcrypt.genSaltSync(10);
   var userData = await billingAppDataController.getUserDetailsById(req.body.userID);
   if(userData && userData.userID !=null){
     res.status(401).json("User already exist");
@@ -26,6 +50,7 @@ exports.registerUser = async(req,res) => {
   else{
     userData = req.body;
     userData.userType = "REGULAR";
+    userData.password = bcrypt.hashSync(userData.password, salt);
     billingAppDataController.insertUserInfo(userData);
     res.status(200).json("User created succesfully");
   }
@@ -76,6 +101,7 @@ exports.addPolicy = async(req,res)=>{
              console.log("what are we getting"+policyUser);
               if(Boolean(policyUser)){
                 policyData.userID = policyUser._id;
+                policyData.policyID = await this.generateRandomPolicyNumber(tokenData);
                 let result=  await billingAppDataController.addPolicyData(policyData); 
                 console.log("what is result: "+JSON.stringify(result));  
               }
@@ -119,6 +145,19 @@ exports.fetchPolicyDetails =async (req, res)=>{
   if (isNotAuthorized) res.status(401).json("not authorized");
   else res.status(200).json(policyData);
   };
+
+  exports.generateRandomPolicyNumber = async()=> {
+    const lowest = 1;
+    const highest = 99999999;
+    let randomNumber = Math.random() * (highest - lowest) + lowest;
+    
+    let policyID = "PL"+Math.floor(randomNumber);
+    let existingId =  await billingAppDataController.getPolicyById(policyID);
+    if(existingId == null || existingId.policyName == null){
+          return policyID;
+    }
+    else await this.generateRandomPolicyNumber(tokenData);
+}
 
   exports.getPolicyDetailFromDb = async (userData) => {
     let policyDetails = {};
