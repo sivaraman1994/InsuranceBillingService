@@ -87,6 +87,7 @@ isNotAuthorized ?  res.status(401).json("not authorized"): res.status(200).json(
 exports.addPolicy = async(req,res)=>{
   let isNotAuthorized = false;
   policyData = {};
+  let isUserExist = true;
   try{
     if(req.body.token ||req.headers.token ){
         let token = req.body.token ||req.headers.token;
@@ -99,13 +100,15 @@ exports.addPolicy = async(req,res)=>{
           if(users && users.userID && users.userType == "AGENT"){
              let policyUser = await billingAppDataController.getUserDetailsBYEmail(policyData.userEmail);
              console.log("what are we getting"+policyUser);
-              if(Boolean(policyUser)){
+              if(policyUser){
                 policyData.userID = policyUser._id;
                 policyData.policyID = await this.generateRandomPolicyNumber(tokenData);
                 let result=  await billingAppDataController.addPolicyData(policyData); 
                 console.log("what is result: "+JSON.stringify(result));  
               }
               else{
+                isUserExist = false;
+                console.log("sindie else");
                 res.status(401).json("User does not exist. Please create an account for the user");
               }             
           }                
@@ -116,9 +119,11 @@ exports.addPolicy = async(req,res)=>{
 }
 catch(err) {
  isNotAuthorized = true; 
- console.log(err)
-} 
-isNotAuthorized ?  res.status(401).json("not authorized"): res.status(200).json("policy added successfully");
+ console.log("inside catch")
+}   
+if(isUserExist){
+  isNotAuthorized  ?  res.status(401).json("not authorized"): res.status(200).json("policy added successfully");
+}
 }          
   
 exports.fetchPolicyDetails =async (req, res)=>{
